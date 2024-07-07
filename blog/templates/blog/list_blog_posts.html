@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Blog Posts</title>
     <!-- Add Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -20,6 +19,7 @@
             border-radius: 10px;
             background-color: #ffffff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         .card-header {
             font-size: 1.5rem;
@@ -27,6 +27,11 @@
         }
         .card-body p {
             font-size: 1.1rem;
+        }
+        .thumbnail {
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
         }
         .btn {
             margin: 5px;
@@ -40,36 +45,40 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
+        <h2>Blog Posts</h2>
         <div class="row mb-4">
             <div class="col">
-                <h2>Dashboard</h2>
-                <a href="{% url 'create_blog_post' %}" class="btn btn-primary">Write New Blog</a>
-                <a href="{% url 'list_user_published' %}" class="btn btn-primary">View Published Blogs</a>
-                <a href="{% url 'list_user_drafts' %}" class="btn btn-primary">View Drafts</a>
+                <label for="categorySelect">Select Category</label>
+                <select name="category" id="categorySelect" class="form-control" onchange="location = this.value;">
+                    
+                    {% for category in categories %}
+                        <option value="{% url 'list_blog_posts_by_category' category.name %}">{{ category.name }}</option>
+                    {% endfor %}
+                    <option value="{% url 'list_blog_posts' %}">All Categories</option>
+                </select>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                Welcome, {{ user.first_name }} {{ user.last_name }} (Doctor)
-            </div>
-            <div class="card-body">
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Address:</strong> {{ user.address_line1 }}, {{ user.city }}, {{ user.state }} - {{ user.pincode }}</p>
-            </div>
+        <div class="row">
+            {% for post in blog_posts %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img-top thumbnail">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ post.title }}</h3>
+                            <p class="card-text">{{ post.category }}</p>
+                            <p class="card-text">{{ post.summary|truncatewords:15 }}...</p>
+                            <p class="card-text">by Dr.{{ post.author }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
-
     <!-- Add Bootstrap and other JavaScript libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>
-
-
-
